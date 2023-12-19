@@ -3,14 +3,104 @@ from tkinter import messagebox
 import sqlite3
 
 
+class AuthorizationWindow:
+    def __init__(self, master, app):
+        self.master = master
+        self.master.title("Login")
+        self.master.geometry("400x300")
+        self.app = app
+
+        # Create a table for users if not exists
+        self.app.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT,
+                password TEXT,
+                role TEXT
+            )
+        ''')
+        self.app.connection.commit()
+
+        self.insert_sample_users()
+
+        # Insert sample user account
+        # self.app.cursor.execute('''
+        #     INSERT OR IGNORE INTO users (username, password) VALUES
+        #     ('admin', 'adminpass')
+        # ''')
+        # self.app.connection.commit()
+
+        # Create login elements
+        self.label_username = tk.Label(master, text="Username:")
+        self.label_username.pack(side=tk.TOP, pady=10)
+
+        self.entry_username = tk.Entry(master)
+        self.entry_username.pack(side=tk.TOP, pady=5)
+
+        self.label_password = tk.Label(master, text="Password:")
+        self.label_password.pack(side=tk.TOP, pady=5)
+
+        self.entry_password = tk.Entry(master, show="*")
+        self.entry_password.pack(side=tk.TOP, pady=5)
+
+        self.button_login = tk.Button(
+            master, text="Login", command=self.login)
+        self.button_login.pack(side=tk.TOP, pady=10)
+
+    def insert_sample_users(self):
+        # Insert sample user accounts if not already present
+        sample_users = [
+            ('admin', 'adminpass', 'administrator'),
+            ('moderator', 'modpass', 'moderator'),
+            ('storekeeper', 'storepass', 'storekeeper'),
+            ('logistician', 'logpass', 'logistician')
+        ]
+        self.app.cursor.executemany('''
+            INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)
+        ''', sample_users)
+        self.app.connection.commit()
+
+    def login(self):
+        username = self.entry_username.get()
+        password = self.entry_password.get()
+
+        try:
+            query = "SELECT * FROM users WHERE username=? AND password=?"
+            self.app.cursor.execute(query, (username, password))
+            user = self.app.cursor.fetchone()
+
+            if user:
+                self.app.user_role = user[3]  # Set user role
+                self.master.destroy()  # Close the login window
+                self.app.show_main_window()
+            else:
+                messagebox.showerror("Error", "Invalid username or password")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error during login: {str(e)}")
+
+
 class WarehouseApp:
     def __init__(self, master):
         self.master = master
+        self.master.withdraw()
         self.master.title("Warehouse App")
 
         # Create and connect to a SQLite database
         self.connection = sqlite3.connect("warehouse.db")
         self.cursor = self.connection.cursor()
+
+        # Initialize user role
+        self.user_role = None
+
+        # Show the authorization window
+        self.show_authorization_window()
+
+    def show_authorization_window(self):
+        authorization_window = tk.Toplevel(self.master)
+        AuthorizationWindow(authorization_window, self)
+
+    def show_main_window(self):
+        self.master.deiconify()  # Show the main window
 
         # Create a table if not exists
         self.cursor.execute('''
@@ -28,191 +118,210 @@ class WarehouseApp:
         self.connection.commit()
 
         # Create GUI elements
-        self.label_id = tk.Label(master, text="ID:")
+        self.label_id = tk.Label(self.master, text="ID:")
         self.label_id.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_id = tk.Entry(master)
+        self.entry_id = tk.Entry(self.master)
         self.entry_id.grid(row=0, column=1, padx=5, pady=5)
 
-        self.label_name = tk.Label(master, text="Name:")
+        self.label_name = tk.Label(self.master, text="Name:")
         self.label_name.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_name = tk.Entry(master)
+        self.entry_name = tk.Entry(self.master)
         self.entry_name.grid(row=1, column=1, padx=5, pady=5)
 
-        self.label_vendor_code = tk.Label(master, text="Vendor Code:")
+        self.label_vendor_code = tk.Label(self.master, text="Vendor Code:")
         self.label_vendor_code.grid(
             row=2, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_vendor_code = tk.Entry(master)
+        self.entry_vendor_code = tk.Entry(self.master)
         self.entry_vendor_code.grid(row=2, column=1, padx=5, pady=5)
 
-        self.label_location = tk.Label(master, text="Location:")
+        self.label_location = tk.Label(self.master, text="Location:")
         self.label_location.grid(row=3, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_location = tk.Entry(master)
+        self.entry_location = tk.Entry(self.master)
         self.entry_location.grid(row=3, column=1, padx=5, pady=5)
 
-        self.label_quantity = tk.Label(master, text="Quantity:")
+        self.label_quantity = tk.Label(self.master, text="Quantity:")
         self.label_quantity.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_quantity = tk.Entry(master)
+        self.entry_quantity = tk.Entry(self.master)
         self.entry_quantity.grid(row=4, column=1, padx=5, pady=5)
 
-        self.label_weight = tk.Label(master, text="Weight:")
+        self.label_weight = tk.Label(self.master, text="Weight:")
         self.label_weight.grid(row=5, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_weight = tk.Entry(master)
+        self.entry_weight = tk.Entry(self.master)
         self.entry_weight.grid(row=5, column=1, padx=5, pady=5)
 
-        self.label_shelf_life = tk.Label(master, text="Shelf Life:")
+        self.label_shelf_life = tk.Label(self.master, text="Shelf Life:")
         self.label_shelf_life.grid(row=6, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_shelf_life = tk.Entry(master)
+        self.entry_shelf_life = tk.Entry(self.master)
         self.entry_shelf_life.grid(row=6, column=1, padx=5, pady=5)
 
-        self.label_shipper = tk.Label(master, text="Shipper:")
+        self.label_shipper = tk.Label(self.master, text="Shipper:")
         self.label_shipper.grid(row=7, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_shipper = tk.Entry(master)
+        self.entry_shipper = tk.Entry(self.master)
         self.entry_shipper.grid(row=7, column=1, padx=5, pady=5)
 
         self.label_search_property = tk.Label(
-            master, text="Search by Property:")
+            self.master, text="Search by Property:")
         self.label_search_property.grid(
             row=8, column=0, padx=5, pady=5, sticky="e")
 
         self.search_property_options = [
             "ID", "Name", "Vendor Code", "Location", "Quantity", "Weight", "Shelf Life", "Shipper"]
-        self.selected_search_property = tk.StringVar(master)
+        self.selected_search_property = tk.StringVar(self.master)
         self.selected_search_property.set(self.search_property_options[0])
 
         self.dropdown_search_property = tk.OptionMenu(
-            master, self.selected_search_property, *self.search_property_options)
+            self.master, self.selected_search_property, *self.search_property_options)
         self.dropdown_search_property.grid(row=8, column=1, padx=5, pady=5)
 
-        self.label_search_term = tk.Label(master, text="Search Term:")
+        self.label_search_term = tk.Label(self.master, text="Search Term:")
         self.label_search_term.grid(
             row=9, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_search_term = tk.Entry(master)
+        self.entry_search_term = tk.Entry(self.master)
         self.entry_search_term.grid(row=9, column=1, padx=5, pady=5)
 
         self.button_insert = tk.Button(
-            master, text="Insert Item", command=self.insert_item)
+            self.master, text="Insert Item", command=self.insert_item)
         self.button_insert.grid(row=10, column=0, columnspan=2, pady=10)
 
         self.button_update = tk.Button(
-            master, text="Update Item", command=self.update_item)
+            self.master, text="Update Item", command=self.update_item)
         self.button_update.grid(row=11, column=0, columnspan=2, pady=10)
 
         self.button_delete = tk.Button(
-            master, text="Delete Item", command=self.delete_item)
+            self.master, text="Delete Item", command=self.delete_item)
         self.button_delete.grid(row=12, column=0, columnspan=2, pady=10)
 
         self.button_search = tk.Button(
-            master, text="Search Items", command=self.search_items)
+            self.master, text="Search Items", command=self.search_items)
         self.button_search.grid(row=13, column=0, columnspan=2, pady=10)
 
         self.button_display = tk.Button(
-            master, text="Display Items", command=self.display_items)
+            self.master, text="Display Items", command=self.display_items)
         self.button_display.grid(row=14, column=0, columnspan=2, pady=10)
 
         # Create a larger text widget to display items like a table
-        self.text_area = tk.Text(master, height=20, width=80)
+        self.text_area = tk.Text(self.master, height=20, width=80)
         self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
 
+        self.logout_button = tk.Button(
+            self.master, text="Logout", command=self.logout)
+        self.logout_button.grid(row=0, column=2, sticky="ne", pady=10)
+
+    def logout(self):
+        self.user_role = None
+        self.master.destroy()
+
     def insert_item(self):
-        name = self.entry_name.get()
-        vendor_code = self.entry_vendor_code.get()
-        location = self.entry_location.get()
-        quantity = self.entry_quantity.get()
-        weight = self.entry_weight.get()
-        shelf_life = self.entry_shelf_life.get()
-        shipper = self.entry_shipper.get()
+        if self.user_role == 'administrator':
+            name = self.entry_name.get()
+            vendor_code = self.entry_vendor_code.get()
+            location = self.entry_location.get()
+            quantity = self.entry_quantity.get()
+            weight = self.entry_weight.get()
+            shelf_life = self.entry_shelf_life.get()
+            shipper = self.entry_shipper.get()
 
-        if name and vendor_code and location and quantity and weight and shelf_life and shipper:
-            try:
-                self.cursor.execute('''
-                    INSERT INTO items (name, vendor_code, location, quantity, weight, shelf_life, shipper)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (name, vendor_code, location, quantity, weight, shelf_life, shipper))
-                self.connection.commit()
-                messagebox.showinfo("Success", "Item inserted successfully.")
-            except Exception as e:
-                messagebox.showerror(
-                    "Error", f"Error inserting item: {str(e)}")
-        else:
-            messagebox.showwarning("Warning", "All fields are required.")
-
-    def update_item(self):
-        item_id = self.entry_id.get()
-        name = self.entry_name.get()
-        vendor_code = self.entry_vendor_code.get()
-        location = self.entry_location.get()
-        quantity = self.entry_quantity.get()
-        weight = self.entry_weight.get()
-        shelf_life = self.entry_shelf_life.get()
-        shipper = self.entry_shipper.get()
-
-        if item_id and (name or vendor_code or location or quantity or weight or shelf_life or shipper):
-            try:
-                update_query = "UPDATE items SET "
-                update_values = []
-
-                if name:
-                    update_query += "name = ?, "
-                    update_values.append(name)
-
-                if vendor_code:
-                    update_query += "vendor_code = ?, "
-                    update_values.append(vendor_code)
-
-                if location:
-                    update_query += "location = ?, "
-                    update_values.append(location)
-
-                if quantity:
-                    update_query += "quantity = ?, "
-                    update_values.append(quantity)
-
-                if weight:
-                    update_query += "weight = ?, "
-                    update_values.append(weight)
-
-                if shelf_life:
-                    update_query += "shelf_life = ?, "
-                    update_values.append(shelf_life)
-
-                if shipper:
-                    update_query += "shipper = ?, "
-                    update_values.append(shipper)
-
-                update_query = update_query.rstrip(", ") + " WHERE id = ?"
-                update_values.append(item_id)
-
-                self.cursor.execute(update_query, tuple(update_values))
-                self.connection.commit()
-                messagebox.showinfo("Success", "Item updated successfully.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Error updating item: {str(e)}")
+            if name and vendor_code and location and quantity and weight and shelf_life and shipper:
+                try:
+                    self.cursor.execute('''
+                        INSERT INTO items (name, vendor_code, location, quantity, weight, shelf_life, shipper)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ''', (name, vendor_code, location, quantity, weight, shelf_life, shipper))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item inserted successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error inserting item: {str(e)}")
+            else:
+                messagebox.showwarning("Warning", "All fields are required.")
         else:
             messagebox.showwarning(
-                "Warning", "Item ID and at least one field to update are required.")
+                "Warning", "You do not have permission to add items.")
+
+    def update_item(self):
+        if self.user_role == 'administrator' or self.user_role == 'manager' or self.user_role == 'storekeeper':
+            item_id = self.entry_id.get()
+            name = self.entry_name.get()
+            vendor_code = self.entry_vendor_code.get()
+            location = self.entry_location.get()
+            quantity = self.entry_quantity.get()
+            weight = self.entry_weight.get()
+            shelf_life = self.entry_shelf_life.get()
+            shipper = self.entry_shipper.get()
+
+            if item_id and location:
+                try:
+                    update_query = '''
+                        UPDATE items
+                        SET name = ?, vendor_code = ?, location = ?, quantity = ?,
+                            weight = ?, shelf_life = ?, shipper = ?
+                        WHERE id = ?
+                    '''
+                    self.cursor.execute(update_query, (name, vendor_code, location,
+                                                       quantity, weight, shelf_life, shipper, item_id))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item updated successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error updating item: {str(e)}")
+            else:
+                messagebox.showwarning(
+                    "Warning", "Item ID and location are required.")
+        elif self.user_role == 'logistician':
+            # Logisticians are only allowed to update the location
+            item_id = self.entry_id.get()
+            location = self.entry_location.get()
+
+            if item_id and location:
+                try:
+                    update_query = "UPDATE items SET location = ? WHERE id = ?"
+                    self.cursor.execute(update_query, (location, item_id))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item location updated successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error updating item location: {str(e)}")
+            else:
+                messagebox.showwarning(
+                    "Warning", "You do not have permission to update items.")
+        else:
+            messagebox.showwarning(
+                "Warning", "Not authorized")
 
     def delete_item(self):
-        item_id = self.entry_id.get()
+        if self.user_role == 'administrator' or self.user_role == 'manager' or self.user_role == 'storekeeper':
+            item_id = self.entry_id.get()
 
-        if item_id:
-            try:
-                self.cursor.execute(
-                    "DELETE FROM items WHERE id = ?", (item_id,))
-                self.connection.commit()
-                messagebox.showinfo("Success", "Item deleted successfully.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Error deleting item: {str(e)}")
+            if item_id:
+                try:
+                    self.cursor.execute(
+                        "DELETE FROM items WHERE id = ?", (item_id,))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item deleted successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error deleting item: {str(e)}")
+            else:
+                messagebox.showwarning("Warning", "Item ID is required.")
+        elif self.user_role == 'logistician':
+            messagebox.showwarning(
+                "Warning", "Logisticians are not allowed to delete items.")
         else:
-            messagebox.showwarning("Warning", "Item ID is required.")
+            messagebox.showwarning(
+                "Warning", "Unauthorized")
 
     def search_items(self):
         search_property = self.selected_search_property.get()
@@ -220,7 +329,8 @@ class WarehouseApp:
 
         if search_property and search_term:
             try:
-                query = f"SELECT * FROM items WHERE {search_property.lower()} LIKE ?"
+                query = f"SELECT * FROM items WHERE {
+                    search_property.lower()} LIKE ?"
                 self.cursor.execute(query, ('%' + search_term + '%',))
                 items = self.cursor.fetchall()
 
@@ -233,7 +343,8 @@ class WarehouseApp:
                     self.text_area.insert(tk.END, header)
 
                     for item in items:
-                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
+                            item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                         self.text_area.insert(tk.END, row_str)
                 else:
                     messagebox.showinfo("Items", "No items found.")
@@ -257,13 +368,15 @@ class WarehouseApp:
             self.text_area.insert(tk.END, header)
 
             for item in items:
-                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
+                    item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                 self.text_area.insert(tk.END, row_str)
         else:
             messagebox.showinfo("Items", "No items found.")
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = WarehouseApp(root)
-    root.mainloop()
+    while True:
+        root = tk.Tk()
+        app = WarehouseApp(root)
+        root.mainloop()
