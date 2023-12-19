@@ -14,7 +14,8 @@ class AuthorizationWindow:
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT,
-                password TEXT
+                password TEXT,
+                role TEXT
             )
         ''')
         self.app.connection.commit()
@@ -26,7 +27,7 @@ class AuthorizationWindow:
         #     INSERT OR IGNORE INTO users (username, password) VALUES
         #     ('admin', 'adminpass')
         # ''')
-        self.app.connection.commit()
+        # self.app.connection.commit()
 
         self.label_username = tk.Label(master, text="Username:")
         self.label_username.grid(row=0, column=0, padx=5, pady=5, sticky="e")
@@ -46,10 +47,14 @@ class AuthorizationWindow:
 
     def insert_sample_users(self):
         # Insert sample user accounts if not already present
-        sample_users = [('admin', 'adminpass'),
-                        ('user1', 'userpass1'), ('user2', 'userpass2')]
+        sample_users = [
+            ('admin', 'adminpass', 'administrator'),
+            ('moderator', 'modpass', 'moderator'),
+            ('storekeeper', 'storepass', 'storekeeper'),
+            ('logistician', 'logpass', 'logistician')
+        ]
         self.app.cursor.executemany('''
-            INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)
+            INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)
         ''', sample_users)
         self.app.connection.commit()
 
@@ -63,6 +68,7 @@ class AuthorizationWindow:
             user = self.app.cursor.fetchone()
 
             if user:
+                self.app.user_role = user[3]  # Set user role
                 self.master.destroy()  # Close the login window
                 self.app.show_main_window()
             else:
@@ -205,96 +211,107 @@ class WarehouseApp:
         self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
 
     def insert_item(self):
-        name = self.entry_name.get()
-        vendor_code = self.entry_vendor_code.get()
-        location = self.entry_location.get()
-        quantity = self.entry_quantity.get()
-        weight = self.entry_weight.get()
-        shelf_life = self.entry_shelf_life.get()
-        shipper = self.entry_shipper.get()
+        if self.user_role == 'administrator':
+            name = self.entry_name.get()
+            vendor_code = self.entry_vendor_code.get()
+            location = self.entry_location.get()
+            quantity = self.entry_quantity.get()
+            weight = self.entry_weight.get()
+            shelf_life = self.entry_shelf_life.get()
+            shipper = self.entry_shipper.get()
 
-        if name and vendor_code and location and quantity and weight and shelf_life and shipper:
-            try:
-                self.cursor.execute('''
-                    INSERT INTO items (name, vendor_code, location, quantity, weight, shelf_life, shipper)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (name, vendor_code, location, quantity, weight, shelf_life, shipper))
-                self.connection.commit()
-                messagebox.showinfo("Success", "Item inserted successfully.")
-            except Exception as e:
-                messagebox.showerror(
-                    "Error", f"Error inserting item: {str(e)}")
-        else:
-            messagebox.showwarning("Warning", "All fields are required.")
-
-    def update_item(self):
-        item_id = self.entry_id.get()
-        name = self.entry_name.get()
-        vendor_code = self.entry_vendor_code.get()
-        location = self.entry_location.get()
-        quantity = self.entry_quantity.get()
-        weight = self.entry_weight.get()
-        shelf_life = self.entry_shelf_life.get()
-        shipper = self.entry_shipper.get()
-
-        if item_id and (name or vendor_code or location or quantity or weight or shelf_life or shipper):
-            try:
-                update_query = "UPDATE items SET "
-                update_values = []
-
-                if name:
-                    update_query += "name = ?, "
-                    update_values.append(name)
-
-                if vendor_code:
-                    update_query += "vendor_code = ?, "
-                    update_values.append(vendor_code)
-
-                if location:
-                    update_query += "location = ?, "
-                    update_values.append(location)
-
-                if quantity:
-                    update_query += "quantity = ?, "
-                    update_values.append(quantity)
-
-                if weight:
-                    update_query += "weight = ?, "
-                    update_values.append(weight)
-
-                if shelf_life:
-                    update_query += "shelf_life = ?, "
-                    update_values.append(shelf_life)
-
-                if shipper:
-                    update_query += "shipper = ?, "
-                    update_values.append(shipper)
-
-                update_query = update_query.rstrip(", ") + " WHERE id = ?"
-                update_values.append(item_id)
-
-                self.cursor.execute(update_query, tuple(update_values))
-                self.connection.commit()
-                messagebox.showinfo("Success", "Item updated successfully.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Error updating item: {str(e)}")
+            if name and vendor_code and location and quantity and weight and shelf_life and shipper:
+                try:
+                    self.cursor.execute('''
+                        INSERT INTO items (name, vendor_code, location, quantity, weight, shelf_life, shipper)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ''', (name, vendor_code, location, quantity, weight, shelf_life, shipper))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item inserted successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error inserting item: {str(e)}")
+            else:
+                messagebox.showwarning("Warning", "All fields are required.")
         else:
             messagebox.showwarning(
-                "Warning", "Item ID and at least one field to update are required.")
+                "Warning", "You do not have permission to add items.")
+
+    def update_item(self):
+        if self.user_role == 'administrator' or self.user_role == 'manager' or self.user_role == 'storekeeper':
+            item_id = self.entry_id.get()
+            name = self.entry_name.get()
+            vendor_code = self.entry_vendor_code.get()
+            location = self.entry_location.get()
+            quantity = self.entry_quantity.get()
+            weight = self.entry_weight.get()
+            shelf_life = self.entry_shelf_life.get()
+            shipper = self.entry_shipper.get()
+
+            if item_id and location:
+                try:
+                    update_query = '''
+                        UPDATE items
+                        SET name = ?, vendor_code = ?, location = ?, quantity = ?,
+                            weight = ?, shelf_life = ?, shipper = ?
+                        WHERE id = ?
+                    '''
+                    self.cursor.execute(update_query, (name, vendor_code, location,
+                                                       quantity, weight, shelf_life, shipper, item_id))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item updated successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error updating item: {str(e)}")
+            else:
+                messagebox.showwarning(
+                    "Warning", "Item ID and location are required.")
+        elif self.user_role == 'logistician':
+            # Logisticians are only allowed to update the location
+            item_id = self.entry_id.get()
+            location = self.entry_location.get()
+
+            if item_id and location:
+                try:
+                    update_query = "UPDATE items SET location = ? WHERE id = ?"
+                    self.cursor.execute(update_query, (location, item_id))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item location updated successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error updating item location: {str(e)}")
+            else:
+                messagebox.showwarning(
+                    "Warning", "You do not have permission to update items.")
+        else:
+            messagebox.showwarning(
+                "Warning", "Not authorized")
 
     def delete_item(self):
-        item_id = self.entry_id.get()
+        if self.user_role == 'administrator' or self.user_role == 'manager' or self.user_role == 'storekeeper':
+            item_id = self.entry_id.get()
 
-        if item_id:
-            try:
-                self.cursor.execute(
-                    "DELETE FROM items WHERE id = ?", (item_id,))
-                self.connection.commit()
-                messagebox.showinfo("Success", "Item deleted successfully.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Error deleting item: {str(e)}")
+            if item_id:
+                try:
+                    self.cursor.execute(
+                        "DELETE FROM items WHERE id = ?", (item_id,))
+                    self.connection.commit()
+                    messagebox.showinfo(
+                        "Success", "Item deleted successfully.")
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Error deleting item: {str(e)}")
+            else:
+                messagebox.showwarning("Warning", "Item ID is required.")
+        elif self.user_role == 'logistician':
+            messagebox.showwarning(
+                "Warning", "Logisticians are not allowed to delete items.")
         else:
-            messagebox.showwarning("Warning", "Item ID is required.")
+            messagebox.showwarning(
+                "Warning", "Unauthorized")
 
     def search_items(self):
         search_property = self.selected_search_property.get()
@@ -302,7 +319,8 @@ class WarehouseApp:
 
         if search_property and search_term:
             try:
-                query = f"SELECT * FROM items WHERE {search_property.lower()} LIKE ?"
+                query = f"SELECT * FROM items WHERE {
+                    search_property.lower()} LIKE ?"
                 self.cursor.execute(query, ('%' + search_term + '%',))
                 items = self.cursor.fetchall()
 
@@ -315,7 +333,8 @@ class WarehouseApp:
                     self.text_area.insert(tk.END, header)
 
                     for item in items:
-                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
+                            item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                         self.text_area.insert(tk.END, row_str)
                 else:
                     messagebox.showinfo("Items", "No items found.")
@@ -339,7 +358,8 @@ class WarehouseApp:
             self.text_area.insert(tk.END, header)
 
             for item in items:
-                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
+                    item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                 self.text_area.insert(tk.END, row_str)
         else:
             messagebox.showinfo("Items", "No items found.")
