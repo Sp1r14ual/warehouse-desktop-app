@@ -220,8 +220,7 @@ class WarehouseApp:
 
         if search_property and search_term:
             try:
-                query = f"SELECT * FROM items WHERE {
-                    search_property.lower()} LIKE ?"
+                query = f"SELECT * FROM items WHERE {search_property.lower()} LIKE ?"
                 self.cursor.execute(query, ('%' + search_term + '%',))
                 items = self.cursor.fetchall()
 
@@ -234,8 +233,7 @@ class WarehouseApp:
                     self.text_area.insert(tk.END, header)
 
                     for item in items:
-                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
-                            item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                         self.text_area.insert(tk.END, row_str)
                 else:
                     messagebox.showinfo("Items", "No items found.")
@@ -259,8 +257,7 @@ class WarehouseApp:
             self.text_area.insert(tk.END, header)
 
             for item in items:
-                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
-                    item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                 self.text_area.insert(tk.END, row_str)
         else:
             messagebox.showinfo("Items", "No items found.")
