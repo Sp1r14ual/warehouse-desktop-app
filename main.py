@@ -3,14 +3,96 @@ from tkinter import messagebox
 import sqlite3
 
 
+class AuthorizationWindow:
+    def __init__(self, master, app):
+        self.master = master
+        self.master.title("Login")
+        self.app = app
+
+        # Create a table for users if not exists
+        self.app.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT,
+                password TEXT
+            )
+        ''')
+        self.app.connection.commit()
+
+        self.insert_sample_users()
+
+        # Insert sample user account
+        # self.app.cursor.execute('''
+        #     INSERT OR IGNORE INTO users (username, password) VALUES
+        #     ('admin', 'adminpass')
+        # ''')
+        self.app.connection.commit()
+
+        self.label_username = tk.Label(master, text="Username:")
+        self.label_username.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+
+        self.entry_username = tk.Entry(master)
+        self.entry_username.grid(row=0, column=1, padx=5, pady=5)
+
+        self.label_password = tk.Label(master, text="Password:")
+        self.label_password.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+
+        self.entry_password = tk.Entry(master, show="*")
+        self.entry_password.grid(row=1, column=1, padx=5, pady=5)
+
+        self.button_login = tk.Button(
+            master, text="Login", command=self.login)
+        self.button_login.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def insert_sample_users(self):
+        # Insert sample user accounts if not already present
+        sample_users = [('admin', 'adminpass'),
+                        ('user1', 'userpass1'), ('user2', 'userpass2')]
+        self.app.cursor.executemany('''
+            INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)
+        ''', sample_users)
+        self.app.connection.commit()
+
+    def login(self):
+        username = self.entry_username.get()
+        password = self.entry_password.get()
+
+        try:
+            query = "SELECT * FROM users WHERE username=? AND password=?"
+            self.app.cursor.execute(query, (username, password))
+            user = self.app.cursor.fetchone()
+
+            if user:
+                self.master.destroy()  # Close the login window
+                self.app.show_main_window()
+            else:
+                messagebox.showerror("Error", "Invalid username or password")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error during login: {str(e)}")
+
+
 class WarehouseApp:
     def __init__(self, master):
         self.master = master
+        self.master.withdraw()
         self.master.title("Warehouse App")
 
         # Create and connect to a SQLite database
         self.connection = sqlite3.connect("warehouse.db")
         self.cursor = self.connection.cursor()
+
+        # Initialize user role
+        self.user_role = None
+
+        # Show the authorization window
+        self.show_authorization_window()
+
+    def show_authorization_window(self):
+        authorization_window = tk.Toplevel(self.master)
+        AuthorizationWindow(authorization_window, self)
+
+    def show_main_window(self):
+        self.master.deiconify()  # Show the main window
 
         # Create a table if not exists
         self.cursor.execute('''
@@ -28,98 +110,98 @@ class WarehouseApp:
         self.connection.commit()
 
         # Create GUI elements
-        self.label_id = tk.Label(master, text="ID:")
+        self.label_id = tk.Label(self.master, text="ID:")
         self.label_id.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_id = tk.Entry(master)
+        self.entry_id = tk.Entry(self.master)
         self.entry_id.grid(row=0, column=1, padx=5, pady=5)
 
-        self.label_name = tk.Label(master, text="Name:")
+        self.label_name = tk.Label(self.master, text="Name:")
         self.label_name.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_name = tk.Entry(master)
+        self.entry_name = tk.Entry(self.master)
         self.entry_name.grid(row=1, column=1, padx=5, pady=5)
 
-        self.label_vendor_code = tk.Label(master, text="Vendor Code:")
+        self.label_vendor_code = tk.Label(self.master, text="Vendor Code:")
         self.label_vendor_code.grid(
             row=2, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_vendor_code = tk.Entry(master)
+        self.entry_vendor_code = tk.Entry(self.master)
         self.entry_vendor_code.grid(row=2, column=1, padx=5, pady=5)
 
-        self.label_location = tk.Label(master, text="Location:")
+        self.label_location = tk.Label(self.master, text="Location:")
         self.label_location.grid(row=3, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_location = tk.Entry(master)
+        self.entry_location = tk.Entry(self.master)
         self.entry_location.grid(row=3, column=1, padx=5, pady=5)
 
-        self.label_quantity = tk.Label(master, text="Quantity:")
+        self.label_quantity = tk.Label(self.master, text="Quantity:")
         self.label_quantity.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_quantity = tk.Entry(master)
+        self.entry_quantity = tk.Entry(self.master)
         self.entry_quantity.grid(row=4, column=1, padx=5, pady=5)
 
-        self.label_weight = tk.Label(master, text="Weight:")
+        self.label_weight = tk.Label(self.master, text="Weight:")
         self.label_weight.grid(row=5, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_weight = tk.Entry(master)
+        self.entry_weight = tk.Entry(self.master)
         self.entry_weight.grid(row=5, column=1, padx=5, pady=5)
 
-        self.label_shelf_life = tk.Label(master, text="Shelf Life:")
+        self.label_shelf_life = tk.Label(self.master, text="Shelf Life:")
         self.label_shelf_life.grid(row=6, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_shelf_life = tk.Entry(master)
+        self.entry_shelf_life = tk.Entry(self.master)
         self.entry_shelf_life.grid(row=6, column=1, padx=5, pady=5)
 
-        self.label_shipper = tk.Label(master, text="Shipper:")
+        self.label_shipper = tk.Label(self.master, text="Shipper:")
         self.label_shipper.grid(row=7, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_shipper = tk.Entry(master)
+        self.entry_shipper = tk.Entry(self.master)
         self.entry_shipper.grid(row=7, column=1, padx=5, pady=5)
 
         self.label_search_property = tk.Label(
-            master, text="Search by Property:")
+            self.master, text="Search by Property:")
         self.label_search_property.grid(
             row=8, column=0, padx=5, pady=5, sticky="e")
 
         self.search_property_options = [
             "ID", "Name", "Vendor Code", "Location", "Quantity", "Weight", "Shelf Life", "Shipper"]
-        self.selected_search_property = tk.StringVar(master)
+        self.selected_search_property = tk.StringVar(self.master)
         self.selected_search_property.set(self.search_property_options[0])
 
         self.dropdown_search_property = tk.OptionMenu(
-            master, self.selected_search_property, *self.search_property_options)
+            self.master, self.selected_search_property, *self.search_property_options)
         self.dropdown_search_property.grid(row=8, column=1, padx=5, pady=5)
 
-        self.label_search_term = tk.Label(master, text="Search Term:")
+        self.label_search_term = tk.Label(self.master, text="Search Term:")
         self.label_search_term.grid(
             row=9, column=0, padx=5, pady=5, sticky="e")
 
-        self.entry_search_term = tk.Entry(master)
+        self.entry_search_term = tk.Entry(self.master)
         self.entry_search_term.grid(row=9, column=1, padx=5, pady=5)
 
         self.button_insert = tk.Button(
-            master, text="Insert Item", command=self.insert_item)
+            self.master, text="Insert Item", command=self.insert_item)
         self.button_insert.grid(row=10, column=0, columnspan=2, pady=10)
 
         self.button_update = tk.Button(
-            master, text="Update Item", command=self.update_item)
+            self.master, text="Update Item", command=self.update_item)
         self.button_update.grid(row=11, column=0, columnspan=2, pady=10)
 
         self.button_delete = tk.Button(
-            master, text="Delete Item", command=self.delete_item)
+            self.master, text="Delete Item", command=self.delete_item)
         self.button_delete.grid(row=12, column=0, columnspan=2, pady=10)
 
         self.button_search = tk.Button(
-            master, text="Search Items", command=self.search_items)
+            self.master, text="Search Items", command=self.search_items)
         self.button_search.grid(row=13, column=0, columnspan=2, pady=10)
 
         self.button_display = tk.Button(
-            master, text="Display Items", command=self.display_items)
+            self.master, text="Display Items", command=self.display_items)
         self.button_display.grid(row=14, column=0, columnspan=2, pady=10)
 
         # Create a larger text widget to display items like a table
-        self.text_area = tk.Text(master, height=20, width=80)
+        self.text_area = tk.Text(self.master, height=20, width=80)
         self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
 
     def insert_item(self):
