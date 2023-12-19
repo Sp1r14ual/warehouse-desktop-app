@@ -7,6 +7,7 @@ class AuthorizationWindow:
     def __init__(self, master, app):
         self.master = master
         self.master.title("Login")
+        self.master.geometry("400x300")
         self.app = app
 
         # Create a table for users if not exists
@@ -29,21 +30,22 @@ class AuthorizationWindow:
         # ''')
         # self.app.connection.commit()
 
+        # Create login elements
         self.label_username = tk.Label(master, text="Username:")
-        self.label_username.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        self.label_username.pack(side=tk.TOP, pady=10)
 
         self.entry_username = tk.Entry(master)
-        self.entry_username.grid(row=0, column=1, padx=5, pady=5)
+        self.entry_username.pack(side=tk.TOP, pady=5)
 
         self.label_password = tk.Label(master, text="Password:")
-        self.label_password.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.label_password.pack(side=tk.TOP, pady=5)
 
         self.entry_password = tk.Entry(master, show="*")
-        self.entry_password.grid(row=1, column=1, padx=5, pady=5)
+        self.entry_password.pack(side=tk.TOP, pady=5)
 
         self.button_login = tk.Button(
             master, text="Login", command=self.login)
-        self.button_login.grid(row=2, column=0, columnspan=2, pady=10)
+        self.button_login.pack(side=tk.TOP, pady=10)
 
     def insert_sample_users(self):
         # Insert sample user accounts if not already present
@@ -210,6 +212,14 @@ class WarehouseApp:
         self.text_area = tk.Text(self.master, height=20, width=80)
         self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
 
+        self.logout_button = tk.Button(
+            self.master, text="Logout", command=self.logout)
+        self.logout_button.grid(row=0, column=2, sticky="ne", pady=10)
+
+    def logout(self):
+        self.user_role = None
+        self.master.destroy()
+
     def insert_item(self):
         if self.user_role == 'administrator':
             name = self.entry_name.get()
@@ -366,6 +376,7 @@ class WarehouseApp:
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = WarehouseApp(root)
-    root.mainloop()
+    while True:
+        root = tk.Tk()
+        app = WarehouseApp(root)
+        root.mainloop()
