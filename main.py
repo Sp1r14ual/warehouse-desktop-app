@@ -168,7 +168,7 @@ class WarehouseApp:
         # self.entry_shipper.grid(row=7, column=1, padx=5, pady=5)
 
         self.label_search_property = tk.Label(
-            self.master, text="Search by Property:")
+            self.master, text="Search by:")
         # self.label_search_property.grid(
         # row=8, column=0, padx=5, pady=5, sticky="e")
 
@@ -189,23 +189,23 @@ class WarehouseApp:
         # self.entry_search_term.grid(row=9, column=1, padx=5, pady=5)
 
         self.button_insert = tk.Button(
-            self.master, text="Insert Item", command=self.insert_item)
+            self.master, text="Insert", command=self.insert_item)
         # self.button_insert.grid(row=10, column=0, columnspan=2, pady=10)
 
         self.button_update = tk.Button(
-            self.master, text="Update Item", command=self.update_item)
+            self.master, text="Update", command=self.update_item)
         # self.button_update.grid(row=11, column=0, columnspan=2, pady=10)
 
         self.button_delete = tk.Button(
-            self.master, text="Delete Item", command=self.delete_item)
+            self.master, text="Delete", command=self.delete_item)
         # self.button_delete.grid(row=12, column=0, columnspan=2, pady=10)
 
         self.button_search = tk.Button(
-            self.master, text="Search Items", command=self.search_items)
+            self.master, text="Search", command=self.search_items)
         # self.button_search.grid(row=13, column=0, columnspan=2, pady=10)
 
         self.button_display = tk.Button(
-            self.master, text="Display Items", command=self.display_items)
+            self.master, text="Display all", command=self.display_items)
         # self.button_display.grid(row=14, column=0, columnspan=2, pady=10)
 
         # Create a larger text widget to display items like a table
@@ -244,26 +244,28 @@ class WarehouseApp:
 
         # Search elements in a single row at the top
         self.label_search_property.grid(
-            row=1, column=3, padx=5, pady=5)
+            row=1, column=13, padx=5, pady=5)
         self.dropdown_search_property.grid(
-            row=1, column=4, padx=5, pady=5)
+            row=1, column=14, padx=5, pady=5)
         self.label_search_term.grid(
-            row=1, column=5, padx=5, pady=5)
+            row=1, column=15, padx=5, pady=5)
         self.entry_search_term.grid(
-            row=1, column=6, padx=5, pady=5)
+            row=1, column=16, padx=5, pady=5)
 
         # Buttons and text area closer to labels and entries
-        self.button_insert.grid(row=4, column=2, padx=5, pady=10)
-        self.button_update.grid(row=5, column=2, padx=5, pady=10)
-        self.button_delete.grid(row=6, column=2, padx=5, pady=10)
-        self.button_search.grid(row=1, column=7, padx=5, pady=10, sticky='e')
-        self.button_display.grid(row=9, column=5, padx=5, pady=10)
+        self.button_insert.grid(row=4, column=2, padx=5, ipadx=5)
+        self.button_update.grid(row=5, column=2, padx=5, ipadx=5)
+        self.button_delete.grid(row=6, column=2, padx=5, ipadx=5)
+        self.button_search.grid(row=1, column=17, padx=5,
+                                pady=10, sticky='e', ipadx=5)
+        self.button_display.grid(row=1, column=3, padx=5, pady=10, ipadx=5)
 
         self.text_area.grid(row=2, column=3, rowspan=7,
-                            columnspan=6, padx=5, pady=5)
+                            columnspan=15, padx=5, pady=5)
 
         # Logout button placed at the top right corner
-        self.logout_button.grid(row=0, column=7, pady=10, sticky='e')
+        self.logout_button.grid(
+            row=0, column=17, pady=10, ipadx=5)
 
     def logout(self):
         self.user_role = None
