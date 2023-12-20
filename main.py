@@ -119,58 +119,58 @@ class WarehouseApp:
 
         # Create GUI elements
         self.label_id = tk.Label(self.master, text="ID:")
-        self.label_id.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        # self.label_id.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_id = tk.Entry(self.master)
-        self.entry_id.grid(row=0, column=1, padx=5, pady=5)
+        # self.entry_id.grid(row=0, column=1, padx=5, pady=5)
 
         self.label_name = tk.Label(self.master, text="Name:")
-        self.label_name.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        # self.label_name.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_name = tk.Entry(self.master)
-        self.entry_name.grid(row=1, column=1, padx=5, pady=5)
+        # self.entry_name.grid(row=1, column=1, padx=5, pady=5)
 
         self.label_vendor_code = tk.Label(self.master, text="Vendor Code:")
-        self.label_vendor_code.grid(
-            row=2, column=0, padx=5, pady=5, sticky="e")
+        # self.label_vendor_code.grid(
+        # row=2, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_vendor_code = tk.Entry(self.master)
-        self.entry_vendor_code.grid(row=2, column=1, padx=5, pady=5)
+        # self.entry_vendor_code.grid(row=2, column=1, padx=5, pady=5)
 
         self.label_location = tk.Label(self.master, text="Location:")
-        self.label_location.grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        # self.label_location.grid(row=3, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_location = tk.Entry(self.master)
-        self.entry_location.grid(row=3, column=1, padx=5, pady=5)
+        # self.entry_location.grid(row=3, column=1, padx=5, pady=5)
 
         self.label_quantity = tk.Label(self.master, text="Quantity:")
-        self.label_quantity.grid(row=4, column=0, padx=5, pady=5, sticky="e")
+        # self.label_quantity.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_quantity = tk.Entry(self.master)
-        self.entry_quantity.grid(row=4, column=1, padx=5, pady=5)
+        # self.entry_quantity.grid(row=4, column=1, padx=5, pady=5)
 
         self.label_weight = tk.Label(self.master, text="Weight:")
-        self.label_weight.grid(row=5, column=0, padx=5, pady=5, sticky="e")
+        # self.label_weight.grid(row=5, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_weight = tk.Entry(self.master)
-        self.entry_weight.grid(row=5, column=1, padx=5, pady=5)
+        # self.entry_weight.grid(row=5, column=1, padx=5, pady=5)
 
         self.label_shelf_life = tk.Label(self.master, text="Shelf Life:")
-        self.label_shelf_life.grid(row=6, column=0, padx=5, pady=5, sticky="e")
+        # self.label_shelf_life.grid(row=6, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_shelf_life = tk.Entry(self.master)
-        self.entry_shelf_life.grid(row=6, column=1, padx=5, pady=5)
+        # self.entry_shelf_life.grid(row=6, column=1, padx=5, pady=5)
 
         self.label_shipper = tk.Label(self.master, text="Shipper:")
-        self.label_shipper.grid(row=7, column=0, padx=5, pady=5, sticky="e")
+        # self.label_shipper.grid(row=7, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_shipper = tk.Entry(self.master)
-        self.entry_shipper.grid(row=7, column=1, padx=5, pady=5)
+        # self.entry_shipper.grid(row=7, column=1, padx=5, pady=5)
 
         self.label_search_property = tk.Label(
             self.master, text="Search by Property:")
-        self.label_search_property.grid(
-            row=8, column=0, padx=5, pady=5, sticky="e")
+        # self.label_search_property.grid(
+        # row=8, column=0, padx=5, pady=5, sticky="e")
 
         self.search_property_options = [
             "ID", "Name", "Vendor Code", "Location", "Quantity", "Weight", "Shelf Life", "Shipper"]
@@ -179,42 +179,88 @@ class WarehouseApp:
 
         self.dropdown_search_property = tk.OptionMenu(
             self.master, self.selected_search_property, *self.search_property_options)
-        self.dropdown_search_property.grid(row=8, column=1, padx=5, pady=5)
+        # self.dropdown_search_property.grid(row=8, column=1, padx=5, pady=5)
 
         self.label_search_term = tk.Label(self.master, text="Search Term:")
-        self.label_search_term.grid(
-            row=9, column=0, padx=5, pady=5, sticky="e")
+        # self.label_search_term.grid(
+        # row=9, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_search_term = tk.Entry(self.master)
-        self.entry_search_term.grid(row=9, column=1, padx=5, pady=5)
+        # self.entry_search_term.grid(row=9, column=1, padx=5, pady=5)
 
         self.button_insert = tk.Button(
             self.master, text="Insert Item", command=self.insert_item)
-        self.button_insert.grid(row=10, column=0, columnspan=2, pady=10)
+        # self.button_insert.grid(row=10, column=0, columnspan=2, pady=10)
 
         self.button_update = tk.Button(
             self.master, text="Update Item", command=self.update_item)
-        self.button_update.grid(row=11, column=0, columnspan=2, pady=10)
+        # self.button_update.grid(row=11, column=0, columnspan=2, pady=10)
 
         self.button_delete = tk.Button(
             self.master, text="Delete Item", command=self.delete_item)
-        self.button_delete.grid(row=12, column=0, columnspan=2, pady=10)
+        # self.button_delete.grid(row=12, column=0, columnspan=2, pady=10)
 
         self.button_search = tk.Button(
             self.master, text="Search Items", command=self.search_items)
-        self.button_search.grid(row=13, column=0, columnspan=2, pady=10)
+        # self.button_search.grid(row=13, column=0, columnspan=2, pady=10)
 
         self.button_display = tk.Button(
             self.master, text="Display Items", command=self.display_items)
-        self.button_display.grid(row=14, column=0, columnspan=2, pady=10)
+        # self.button_display.grid(row=14, column=0, columnspan=2, pady=10)
 
         # Create a larger text widget to display items like a table
         self.text_area = tk.Text(self.master, height=20, width=80)
-        self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
+        # self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
 
         self.logout_button = tk.Button(
             self.master, text="Logout", command=self.logout)
-        self.logout_button.grid(row=0, column=2, sticky="ne", pady=10)
+        # self.logout_button.grid(row=0, column=2, sticky="ne", pady=10)
+
+        # Create GUI elements with improved layout
+        self.label_id.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.entry_id.grid(row=1, column=1, padx=5, pady=5)
+
+        self.label_name.grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.entry_name.grid(row=2, column=1, padx=5, pady=5)
+
+        self.label_vendor_code.grid(
+            row=3, column=0, padx=5, pady=5, sticky="e")
+        self.entry_vendor_code.grid(row=3, column=1, padx=5, pady=5)
+
+        self.label_location.grid(row=4, column=0, padx=5, pady=5, sticky="e")
+        self.entry_location.grid(row=4, column=1, padx=5, pady=5)
+
+        self.label_quantity.grid(row=5, column=0, padx=5, pady=5, sticky="e")
+        self.entry_quantity.grid(row=5, column=1, padx=5, pady=5)
+
+        self.label_weight.grid(row=6, column=0, padx=5, pady=5, sticky="e")
+        self.entry_weight.grid(row=6, column=1, padx=5, pady=5)
+
+        self.label_shelf_life.grid(row=7, column=0, padx=5, pady=5, sticky="e")
+        self.entry_shelf_life.grid(row=7, column=1, padx=5, pady=5)
+
+        self.label_shipper.grid(row=8, column=0, padx=5, pady=5, sticky="e")
+        self.entry_shipper.grid(row=8, column=1, padx=5, pady=5)
+
+        # Search elements in a single row at the top
+        self.label_search_property.grid(
+            row=0, column=2, padx=5, pady=5)
+        self.dropdown_search_property.grid(row=0, column=3, padx=5, pady=5)
+        self.label_search_term.grid(
+            row=0, column=4, padx=5, pady=5)
+        self.entry_search_term.grid(row=0, column=5, padx=5, pady=5)
+
+        # Buttons and text area closer to labels and entries
+        self.button_insert.grid(row=1, column=2, padx=5, pady=10)
+        self.button_update.grid(row=2, column=2, padx=5, pady=10)
+        self.button_delete.grid(row=3, column=2, padx=5, pady=10)
+        self.button_search.grid(row=4, column=2, padx=5, pady=10)
+        self.button_display.grid(row=5, column=2, padx=5, pady=10)
+
+        self.text_area.grid(row=1, column=3, rowspan=7, padx=5, pady=5)
+
+        # Logout button placed at the top right corner
+        self.logout_button.grid(row=0, column=8, sticky="ne", pady=10)
 
     def logout(self):
         self.user_role = None
@@ -329,8 +375,7 @@ class WarehouseApp:
 
         if search_property and search_term:
             try:
-                query = f"SELECT * FROM items WHERE {
-                    search_property.lower()} LIKE ?"
+                query = f"SELECT * FROM items WHERE {search_property.lower()} LIKE ?"
                 self.cursor.execute(query, ('%' + search_term + '%',))
                 items = self.cursor.fetchall()
 
@@ -343,8 +388,7 @@ class WarehouseApp:
                     self.text_area.insert(tk.END, header)
 
                     for item in items:
-                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
-                            item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                         self.text_area.insert(tk.END, row_str)
                 else:
                     messagebox.showinfo("Items", "No items found.")
@@ -368,8 +412,7 @@ class WarehouseApp:
             self.text_area.insert(tk.END, header)
 
             for item in items:
-                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
-                    item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                 self.text_area.insert(tk.END, row_str)
         else:
             messagebox.showinfo("Items", "No items found.")
