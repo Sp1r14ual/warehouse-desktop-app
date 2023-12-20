@@ -324,19 +324,52 @@ class WarehouseApp:
             shelf_life = self.entry_shelf_life.get()
             shipper = self.entry_shipper.get()
 
-            if item_id and location:
+            if item_id:
                 try:
-                    update_query = '''
-                        UPDATE items
-                        SET name = ?, vendor_code = ?, location = ?, quantity = ?,
-                            weight = ?, shelf_life = ?, shipper = ?
-                        WHERE id = ?
-                    '''
-                    self.cursor.execute(update_query, (name, vendor_code, location,
-                                                       quantity, weight, shelf_life, shipper, item_id))
-                    self.connection.commit()
-                    messagebox.showinfo(
-                        "Success", "Item updated successfully.")
+                    update_query = "UPDATE items SET "
+                    update_values = []
+
+                    if name:
+                        update_query += "name = ?, "
+                        update_values.append(name)
+
+                    if vendor_code:
+                        update_query += "vendor_code = ?, "
+                        update_values.append(vendor_code)
+
+                    if location:
+                        update_query += "location = ?, "
+                        update_values.append(location)
+
+                    if quantity:
+                        update_query += "quantity = ?, "
+                        update_values.append(quantity)
+
+                    if weight:
+                        update_query += "weight = ?, "
+                        update_values.append(weight)
+
+                    if shelf_life:
+                        update_query += "shelf_life = ?, "
+                        update_values.append(shelf_life)
+
+                    if shipper:
+                        update_query += "shipper = ?, "
+                        update_values.append(shipper)
+
+                    # Check if any fields are being updated
+                    if update_values:
+                        update_query = update_query.rstrip(
+                            ", ") + " WHERE id = ?"
+                        update_values.append(item_id)
+
+                        self.cursor.execute(update_query, tuple(update_values))
+                        self.connection.commit()
+                        messagebox.showinfo(
+                            "Success", "Item updated successfully.")
+                    else:
+                        messagebox.showinfo(
+                            "No Update", "No fields to update.")
                 except Exception as e:
                     messagebox.showerror(
                         "Error", f"Error updating item: {str(e)}")
