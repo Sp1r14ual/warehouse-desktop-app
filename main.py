@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import font
 import sqlite3
 
 
@@ -31,20 +32,22 @@ class AuthorizationWindow:
         # self.app.connection.commit()
 
         # Create login elements
-        self.label_username = tk.Label(master, text="Username:")
+        self.label_username = tk.Label(master, text="Username:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         self.label_username.pack(side=tk.TOP, pady=10)
 
-        self.entry_username = tk.Entry(master)
+        self.entry_username = tk.Entry(master, justify='center')
         self.entry_username.pack(side=tk.TOP, pady=5)
 
-        self.label_password = tk.Label(master, text="Password:")
+        self.label_password = tk.Label(master, text="Password:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         self.label_password.pack(side=tk.TOP, pady=5)
 
-        self.entry_password = tk.Entry(master, show="*")
+        self.entry_password = tk.Entry(master, show="*", justify='center')
         self.entry_password.pack(side=tk.TOP, pady=5)
 
         self.button_login = tk.Button(
-            master, text="Login", command=self.login)
+            master, text="Login", command=self.login, bg='green', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         self.button_login.pack(side=tk.TOP, pady=10)
 
     def insert_sample_users(self):
@@ -118,57 +121,65 @@ class WarehouseApp:
         self.connection.commit()
 
         # Create GUI elements
-        self.label_id = tk.Label(self.master, text="ID:")
+        self.label_id = tk.Label(self.master, text="ID:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_id.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_id = tk.Entry(self.master)
         # self.entry_id.grid(row=0, column=1, padx=5, pady=5)
 
-        self.label_name = tk.Label(self.master, text="Name:")
+        self.label_name = tk.Label(self.master, text="Name:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_name.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_name = tk.Entry(self.master)
         # self.entry_name.grid(row=1, column=1, padx=5, pady=5)
 
-        self.label_vendor_code = tk.Label(self.master, text="Vendor Code:")
+        self.label_vendor_code = tk.Label(self.master, text="Vendor Code:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_vendor_code.grid(
         # row=2, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_vendor_code = tk.Entry(self.master)
         # self.entry_vendor_code.grid(row=2, column=1, padx=5, pady=5)
 
-        self.label_location = tk.Label(self.master, text="Location:")
+        self.label_location = tk.Label(self.master, text="Location:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_location.grid(row=3, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_location = tk.Entry(self.master)
         # self.entry_location.grid(row=3, column=1, padx=5, pady=5)
 
-        self.label_quantity = tk.Label(self.master, text="Quantity:")
+        self.label_quantity = tk.Label(self.master, text="Quantity:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_quantity.grid(row=4, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_quantity = tk.Entry(self.master)
         # self.entry_quantity.grid(row=4, column=1, padx=5, pady=5)
 
-        self.label_weight = tk.Label(self.master, text="Weight:")
+        self.label_weight = tk.Label(self.master, text="Weight:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_weight.grid(row=5, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_weight = tk.Entry(self.master)
         # self.entry_weight.grid(row=5, column=1, padx=5, pady=5)
 
-        self.label_shelf_life = tk.Label(self.master, text="Shelf Life:")
+        self.label_shelf_life = tk.Label(self.master, text="Shelf Life:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_shelf_life.grid(row=6, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_shelf_life = tk.Entry(self.master)
         # self.entry_shelf_life.grid(row=6, column=1, padx=5, pady=5)
 
-        self.label_shipper = tk.Label(self.master, text="Shipper:")
+        self.label_shipper = tk.Label(self.master, text="Shipper:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_shipper.grid(row=7, column=0, padx=5, pady=5, sticky="e")
 
         self.entry_shipper = tk.Entry(self.master)
         # self.entry_shipper.grid(row=7, column=1, padx=5, pady=5)
 
         self.label_search_property = tk.Label(
-            self.master, text="Search by:")
+            self.master, text="Search by:", font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.label_search_property.grid(
         # row=8, column=0, padx=5, pady=5, sticky="e")
 
@@ -180,8 +191,11 @@ class WarehouseApp:
         self.dropdown_search_property = tk.OptionMenu(
             self.master, self.selected_search_property, *self.search_property_options)
         # self.dropdown_search_property.grid(row=8, column=1, padx=5, pady=5)
+        self.dropdown_search_property.config(
+            bg='green', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
 
-        self.label_search_term = tk.Label(self.master, text="Search Term:")
+        self.label_search_term = tk.Label(self.master, text="Search Term:", font=font.Font(
+            family='Verdana', size=9, weight='bold'))
         # self.label_search_term.grid(
         # row=9, column=0, padx=5, pady=5, sticky="e")
 
@@ -189,23 +203,23 @@ class WarehouseApp:
         # self.entry_search_term.grid(row=9, column=1, padx=5, pady=5)
 
         self.button_insert = tk.Button(
-            self.master, text="Insert", command=self.insert_item)
+            self.master, text="Insert", command=self.insert_item, bg='blue', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.button_insert.grid(row=10, column=0, columnspan=2, pady=10)
 
         self.button_update = tk.Button(
-            self.master, text="Update", command=self.update_item)
+            self.master, text="Update", command=self.update_item, bg='blue', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.button_update.grid(row=11, column=0, columnspan=2, pady=10)
 
         self.button_delete = tk.Button(
-            self.master, text="Delete", command=self.delete_item)
+            self.master, text="Delete", command=self.delete_item, bg='red', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.button_delete.grid(row=12, column=0, columnspan=2, pady=10)
 
         self.button_search = tk.Button(
-            self.master, text="Search", command=self.search_items)
+            self.master, text="Search", command=self.search_items, bg='green', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.button_search.grid(row=13, column=0, columnspan=2, pady=10)
 
         self.button_display = tk.Button(
-            self.master, text="Display all", command=self.display_items)
+            self.master, text="Display all", command=self.display_items, bg='green', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.button_display.grid(row=14, column=0, columnspan=2, pady=10)
 
         # Create a larger text widget to display items like a table
@@ -213,7 +227,7 @@ class WarehouseApp:
         # self.text_area.grid(row=15, column=0, columnspan=2, padx=5, pady=5)
 
         self.logout_button = tk.Button(
-            self.master, text="Logout", command=self.logout)
+            self.master, text="Logout", command=self.logout, bg='red', fg='white', font=font.Font(family='Verdana', size=9, weight='bold'))
         # self.logout_button.grid(row=0, column=2, sticky="ne", pady=10)
 
         # Create GUI elements with improved layout
