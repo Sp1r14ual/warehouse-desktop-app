@@ -404,12 +404,12 @@ class WarehouseApp:
                     self.text_area.delete(1.0, tk.END)
 
                     # Display items in the text area like a table
-                    header = "ID\tName\tVendor Code\tLocation\tQuantity\tWeight\tShelf Life\tShipper\n"
+                    header = "ID\tName\tVCode\tLocation\tQuantity\tWeight\tSLife\tShipper\n"
                     self.text_area.insert(tk.END, header)
 
                     for item in items:
-                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
-                            item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t  {item[3]}\t  {
+                            item[4]}\t  {item[5]}\t  {item[6]}\t  {item[7]}\n"
                         self.text_area.insert(tk.END, row_str)
                 else:
                     messagebox.showinfo("Items", "No items found.")
@@ -429,12 +429,12 @@ class WarehouseApp:
             self.text_area.delete(1.0, tk.END)
 
             # Display items in the text area like a table
-            header = "ID\tName\tVendor Code\tLocation\tQuantity\tWeight\tShelf Life\tShipper\n"
+            header = "ID\tName\tVCode\tLocation\tQuantity\tWeight\tSLife\tShipper\n"
             self.text_area.insert(tk.END, header)
 
             for item in items:
-                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
-                    item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t  {item[3]}\t  {
+                    item[4]}\t  {item[5]}\t  {item[6]}\t  {item[7]}\n"
                 self.text_area.insert(tk.END, row_str)
         else:
             messagebox.showinfo("Items", "No items found.")
