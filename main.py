@@ -217,50 +217,53 @@ class WarehouseApp:
         # self.logout_button.grid(row=0, column=2, sticky="ne", pady=10)
 
         # Create GUI elements with improved layout
-        self.label_id.grid(row=1, column=0, padx=5, pady=5, sticky="e")
-        self.entry_id.grid(row=1, column=1, padx=5, pady=5)
+        self.label_id.grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.entry_id.grid(row=2, column=1, padx=5, pady=5)
 
-        self.label_name.grid(row=2, column=0, padx=5, pady=5, sticky="e")
-        self.entry_name.grid(row=2, column=1, padx=5, pady=5)
+        self.label_name.grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        self.entry_name.grid(row=3, column=1, padx=5, pady=5)
 
         self.label_vendor_code.grid(
-            row=3, column=0, padx=5, pady=5, sticky="e")
-        self.entry_vendor_code.grid(row=3, column=1, padx=5, pady=5)
+            row=4, column=0, padx=5, pady=5, sticky="e")
+        self.entry_vendor_code.grid(row=4, column=1, padx=5, pady=5)
 
-        self.label_location.grid(row=4, column=0, padx=5, pady=5, sticky="e")
-        self.entry_location.grid(row=4, column=1, padx=5, pady=5)
+        self.label_location.grid(row=5, column=0, padx=5, pady=5, sticky="e")
+        self.entry_location.grid(row=5, column=1, padx=5, pady=5)
 
-        self.label_quantity.grid(row=5, column=0, padx=5, pady=5, sticky="e")
-        self.entry_quantity.grid(row=5, column=1, padx=5, pady=5)
+        self.label_quantity.grid(row=6, column=0, padx=5, pady=5, sticky="e")
+        self.entry_quantity.grid(row=6, column=1, padx=5, pady=5)
 
-        self.label_weight.grid(row=6, column=0, padx=5, pady=5, sticky="e")
-        self.entry_weight.grid(row=6, column=1, padx=5, pady=5)
+        self.label_weight.grid(row=7, column=0, padx=5, pady=5, sticky="e")
+        self.entry_weight.grid(row=7, column=1, padx=5, pady=5)
 
-        self.label_shelf_life.grid(row=7, column=0, padx=5, pady=5, sticky="e")
-        self.entry_shelf_life.grid(row=7, column=1, padx=5, pady=5)
+        self.label_shelf_life.grid(row=8, column=0, padx=5, pady=5, sticky="e")
+        self.entry_shelf_life.grid(row=8, column=1, padx=5, pady=5)
 
-        self.label_shipper.grid(row=8, column=0, padx=5, pady=5, sticky="e")
-        self.entry_shipper.grid(row=8, column=1, padx=5, pady=5)
+        self.label_shipper.grid(row=9, column=0, padx=5, pady=5, sticky="e")
+        self.entry_shipper.grid(row=9, column=1, padx=5, pady=5)
 
         # Search elements in a single row at the top
         self.label_search_property.grid(
-            row=0, column=2, padx=5, pady=5)
-        self.dropdown_search_property.grid(row=0, column=3, padx=5, pady=5)
+            row=1, column=3, padx=5, pady=5)
+        self.dropdown_search_property.grid(
+            row=1, column=4, padx=5, pady=5)
         self.label_search_term.grid(
-            row=0, column=4, padx=5, pady=5)
-        self.entry_search_term.grid(row=0, column=5, padx=5, pady=5)
+            row=1, column=5, padx=5, pady=5)
+        self.entry_search_term.grid(
+            row=1, column=6, padx=5, pady=5)
 
         # Buttons and text area closer to labels and entries
-        self.button_insert.grid(row=1, column=2, padx=5, pady=10)
-        self.button_update.grid(row=2, column=2, padx=5, pady=10)
-        self.button_delete.grid(row=3, column=2, padx=5, pady=10)
-        self.button_search.grid(row=4, column=2, padx=5, pady=10)
-        self.button_display.grid(row=5, column=2, padx=5, pady=10)
+        self.button_insert.grid(row=4, column=2, padx=5, pady=10)
+        self.button_update.grid(row=5, column=2, padx=5, pady=10)
+        self.button_delete.grid(row=6, column=2, padx=5, pady=10)
+        self.button_search.grid(row=1, column=7, padx=5, pady=10, sticky='e')
+        self.button_display.grid(row=9, column=5, padx=5, pady=10)
 
-        self.text_area.grid(row=1, column=3, rowspan=7, padx=5, pady=5)
+        self.text_area.grid(row=2, column=3, rowspan=7,
+                            columnspan=6, padx=5, pady=5)
 
         # Logout button placed at the top right corner
-        self.logout_button.grid(row=0, column=8, sticky="ne", pady=10)
+        self.logout_button.grid(row=0, column=7, pady=10, sticky='e')
 
     def logout(self):
         self.user_role = None
@@ -375,7 +378,8 @@ class WarehouseApp:
 
         if search_property and search_term:
             try:
-                query = f"SELECT * FROM items WHERE {search_property.lower()} LIKE ?"
+                query = f"SELECT * FROM items WHERE {
+                    search_property.lower()} LIKE ?"
                 self.cursor.execute(query, ('%' + search_term + '%',))
                 items = self.cursor.fetchall()
 
@@ -388,7 +392,8 @@ class WarehouseApp:
                     self.text_area.insert(tk.END, header)
 
                     for item in items:
-                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                        row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
+                            item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                         self.text_area.insert(tk.END, row_str)
                 else:
                     messagebox.showinfo("Items", "No items found.")
@@ -412,7 +417,8 @@ class WarehouseApp:
             self.text_area.insert(tk.END, header)
 
             for item in items:
-                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
+                row_str = f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{
+                    item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\n"
                 self.text_area.insert(tk.END, row_str)
         else:
             messagebox.showinfo("Items", "No items found.")
